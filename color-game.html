@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>色彩記憶大考驗 - 王幸翎的可愛版遊戲 (Bootstrap)</title>
+    <!-- 引入 Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 引入 Google 字體 -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bs-body-bg: #fdf2f8;
+            --main-pink: #db2777;
+            --card-shadow: 0 15px 0px #f1f5f9;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #fdf2f8 0%, #e0f2fe 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
+
+        /* 名字胸章 */
+        #author-tag {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            box-shadow: 0 5px 0px #e2e8f0;
+            border: 2px solid #fbcfe8;
+            font-weight: 700;
+            color: var(--main-pink);
+            z-index: 1000;
+        }
+
+        /* 遊戲主容器 */
+        .game-card {
+            border: 4px solid #bae6fd;
+            border-radius: 40px;
+            box-shadow: var(--card-shadow);
+            max-width: 500px;
+            width: 100%;
+            background: white;
+            padding: 40px 20px;
+        }
+
+        /* 難度切換按鈕自定義 */
+        .btn-check:checked+.btn-outline-info {
+            background-color: #3bc9db;
+            color: white;
+        }
+
+        /* 色塊網格 */
+        .color-grid {
+            display: grid;
+            gap: 15px;
+            margin: 20px auto;
+            max-width: 320px;
+        }
+
+        .grid-4 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .grid-9 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        /* 可愛色塊 */
+        .color-tile {
+            aspect-ratio: 1 / 1;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 6px 0px rgba(0, 0, 0, 0.05);
+            user-select: none;
+            opacity: 0.8;
+        }
+
+        .color-tile:hover {
+            transform: scale(1.03) rotate(2deg);
+            opacity: 1;
+        }
+
+        /* 閃爍效果 */
+        .active-flash {
+            transform: scale(1.1) rotate(-3deg) !important;
+            box-shadow: 0 0 25px currentColor !important;
+            border-color: white !important;
+            opacity: 1 !important;
+        }
+
+        /* 分數區域 */
+        .score-panel {
+            background-color: #fff9db;
+            border: 2px dashed #fab005;
+            border-radius: 20px;
+        }
+
+        /* 開始按鈕 */
+        .btn-game-start {
+            background-color: #ff8787;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 40px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            box-shadow: 0 6px 0 #fa5252;
+            transition: all 0.1s;
+        }
+
+        .btn-game-start:hover {
+            background-color: #ff6b6b;
+            transform: translateY(2px);
+            box-shadow: 0 4px 0 #fa5252;
+        }
+
+        .btn-game-start:active {
+            transform: translateY(6px);
+            box-shadow: 0 0px 0 #fa5252;
+        }
+
+        #message-box {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #495057;
+            min-height: 1.5em;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- 名字標籤 -->
+    <div id="author-tag">
+        🐾 設計者：<span id="name-display">載入中...</span>
+    </div>
+
+    <div class="container d-flex justify-content-center">
+        <div class="game-card text-center">
+            <h1 class="display-5 fw-bold text-info mb-1">✨ 色彩小精靈 ✨</h1>
+            <p class="text-secondary fw-bold mb-4">跟著動物夥伴一起玩記憶遊戲！</p>
+
+            <!-- 難度選擇 (Bootstrap Button Group) -->
+            <div class="btn-group mb-4" role="group">
+                <input type="radio" class="btn-check" name="difficulty" id="diff4" checked onclick="setDifficulty(4)">
+                <label class="btn btn-outline-info px-4 rounded-start-pill" for="diff4">🐰 簡單</label>
+
+                <input type="radio" class="btn-check" name="difficulty" id="diff9" onclick="setDifficulty(9)">
+                <label class="btn btn-outline-info px-4 rounded-end-pill" for="diff9">🦁 挑戰</label>
+            </div>
+
+            <!-- 分數面板 -->
+            <div class="score-panel p-3 mb-4 d-flex justify-content-around">
+                <div class="h5 m-0 text-dark">⭐ 分數: <span id="score" class="text-primary">0</span></div>
+                <div class="h5 m-0 text-dark">🏆 最高: <span id="high-score" class="text-danger">0</span></div>
+            </div>
+
+            <div id="message-box" class="mb-3">準備好就按開始吧！</div>
+
+            <!-- 遊戲網格 -->
+            <div id="game-grid" class="color-grid grid-4 mb-4">
+                <!-- 動態生成 -->
+            </div>
+
+            <button id="start-btn" class="btn-game-start" onclick="startGame()">遊戲開始！</button>
+        </div>
+    </div>
+
+    <!-- 引入 Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const MY_NAME = "王幸翎";
+        document.getElementById('name-display').innerText = MY_NAME;
+
+        const TILE_DATA = [
+            { color: '#ffadad', icon: '🍎' },
+            { color: '#ffd6a5', icon: '🦊' },
+            { color: '#fdffb6', icon: '🐥' },
+            { color: '#caffbf', icon: '🐢' },
+            { color: '#9bf6ff', icon: '🐳' },
+            { color: '#a0c4ff', icon: '🐘' },
+            { color: '#bdb2ff', icon: '🦄' },
+            { color: '#ffc6ff', icon: '🐷' },
+            { color: '#fffffc', icon: '🐼' }
+        ];
+
+        let gameSequence = [];
+        let playerSequence = [];
+        let score = 0;
+        let highScore = 0;
+        let isPlaying = false;
+        let canClick = false;
+        let difficulty = 4;
+
+        const gridElement = document.getElementById('game-grid');
+        const scoreElement = document.getElementById('score');
+        const highScoreElement = document.getElementById('high-score');
+        const messageBox = document.getElementById('message-box');
+        const startBtn = document.getElementById('start-btn');
+
+        function initGrid() {
+            gridElement.innerHTML = '';
+            gridElement.className = `color-grid grid-${difficulty}`;
+
+            for (let i = 0; i < difficulty; i++) {
+                const tile = document.createElement('div');
+                tile.className = 'color-tile';
+                tile.style.backgroundColor = TILE_DATA[i].color;
+                tile.style.color = TILE_DATA[i].color;
+                tile.innerHTML = `<span>${TILE_DATA[i].icon}</span>`;
+                tile.onclick = () => handleTileClick(i);
+                gridElement.appendChild(tile);
+            }
+        }
+
+        // 修改：允許隨時切換難度並重置遊戲
+        function setDifficulty(num) {
+            difficulty = num;
+            isPlaying = false; // 強制結束當前狀態
+            canClick = false;
+            initGrid();
+            resetGame();
+            startBtn.innerText = "遊戲開始！";
+        }
+
+        function resetGame() {
+            gameSequence = [];
+            playerSequence = [];
+            score = 0;
+            scoreElement.innerText = score;
+            messageBox.innerHTML = "難度已切換，按開始挑戰吧！";
+            startBtn.disabled = false;
+            gridElement.style.pointerEvents = 'auto';
+        }
+
+        function startGame() {
+            resetGame();
+            isPlaying = true;
+            startBtn.disabled = true;
+            nextRound();
+        }
+
+        function nextRound() {
+            playerSequence = [];
+            canClick = false;
+            gridElement.style.pointerEvents = 'none';
+
+            // 每一回合生成全新序列
+            gameSequence = [];
+            const sequenceLength = score + 1;
+            for (let i = 0; i < sequenceLength; i++) {
+                gameSequence.push(Math.floor(Math.random() * difficulty));
+            }
+
+            messageBox.innerHTML = `🌈 觀察小夥伴跳舞... (${sequenceLength}次)`;
+            playSequence();
+        }
+
+        async function playSequence() {
+            await new Promise(r => setTimeout(r, 800));
+            // 如果在播放期間切換難度，則停止播放
+            const currentRoundDiff = difficulty;
+
+            for (let i = 0; i < gameSequence.length; i++) {
+                if (!isPlaying || difficulty !== currentRoundDiff) return;
+                await flashTile(gameSequence[i]);
+                await new Promise(r => setTimeout(r, 300));
+            }
+
+            if (!isPlaying || difficulty !== currentRoundDiff) return;
+            canClick = true;
+            gridElement.style.pointerEvents = 'auto';
+            messageBox.innerHTML = "🙌 換你試試看囉！";
+        }
+
+        function flashTile(index) {
+            return new Promise(resolve => {
+                const tiles = document.getElementsByClassName('color-tile');
+                const tile = tiles[index];
+                if (tile) {
+                    tile.classList.add('active-flash');
+                    setTimeout(() => {
+                        tile.classList.remove('active-flash');
+                        resolve();
+                    }, 500);
+                } else {
+                    resolve();
+                }
+            });
+        }
+
+        function handleTileClick(index) {
+            if (!canClick || !isPlaying) return;
+
+            const tiles = document.getElementsByClassName('color-tile');
+            tiles[index].classList.add('active-flash');
+            setTimeout(() => tiles[index].classList.remove('active-flash'), 200);
+
+            const currentStep = playerSequence.length;
+            if (index === gameSequence[currentStep]) {
+                playerSequence.push(index);
+                if (playerSequence.length === gameSequence.length) {
+                    score++;
+                    scoreElement.innerText = score;
+                    if (score > highScore) {
+                        highScore = score;
+                        highScoreElement.innerText = highScore;
+                    }
+                    canClick = false;
+                    gridElement.style.pointerEvents = 'none';
+                    messageBox.innerHTML = "<span class='text-success'>🎉 太厲害了！下一關！</span>";
+                    setTimeout(nextRound, 1200);
+                }
+            } else {
+                gameOver();
+            }
+        }
+
+        function gameOver() {
+            isPlaying = false;
+            canClick = false;
+            gridElement.style.pointerEvents = 'none';
+            messageBox.innerHTML = `<span class="text-danger">哎呀！分數是 ${score}，再玩一次吧！</span>`;
+            startBtn.innerText = "重新開始冒險";
+            startBtn.disabled = false;
+        }
+
+        window.onload = initGrid;
+    </script>
+</body>
+
+</html>
