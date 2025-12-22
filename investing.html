@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智慧投資推薦系統 - 大學生小資版 2.5</title>
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- 引入 Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --color-primary: #383F51; /* 深灰藍 */
+            --color-light: #DDDBF1;   /* 淡紫灰 */
+            --color-navy: #3C4F76;    /* muted 海軍藍 */
+            --color-accent: #D1BEB0;  /* 暖沙色 */
+            --color-muted: #AB9F9D;   /* 莫蘭迪棕 */
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', 'Noto Sans TC', sans-serif;
+            background-color: var(--color-primary);
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(60, 79, 118, 0.4) 0%, transparent 40%),
+                radial-gradient(circle at 100% 100%, rgba(209, 190, 176, 0.15) 0%, transparent 40%);
+            color: var(--color-light);
+            min-height: 100vh;
+        }
+
+        /* 磨砂玻璃效果 */
+        .glass {
+            background: rgba(60, 79, 118, 0.25);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(221, 219, 241, 0.1);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4);
+        }
+
+        /* 漸層文字 */
+        .accent-gradient {
+            background: linear-gradient(to right, #D1BEB0, #DDDBF1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* 霓虹發光 */
+        .glow-accent {
+            text-shadow: 0 0 10px rgba(209, 190, 176, 0.4);
+        }
+
+        /* 進場動畫 */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in { animation: fadeInUp 0.7s ease-out forwards; }
+
+        /* 科技感加載線 */
+        .scanner-line {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+            position: absolute;
+            top: 0;
+            animation: scan 2.5s linear infinite;
+        }
+        @keyframes scan {
+            0% { top: 0%; opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        /* 自定義按鈕 */
+        .btn-fancy {
+            background-color: var(--color-navy);
+            border: 1px solid rgba(221, 219, 241, 0.2);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-fancy:hover {
+            background-color: #4a5d85;
+            box-shadow: 0 0 20px rgba(209, 190, 176, 0.2);
+            border-color: var(--color-accent);
+        }
+        .btn-fancy:active { transform: scale(0.97); }
+
+        /* 個人標籤 */
+        .id-badge {
+            background: rgba(56, 63, 81, 0.9);
+            border-bottom: 2px solid var(--color-accent);
+            color: var(--color-light);
+        }
+
+        /* 輸入框樣式 */
+        .custom-input {
+            background-color: rgba(60, 79, 118, 0.3);
+            border: 1px solid rgba(171, 159, 157, 0.3);
+            color: var(--color-light);
+        }
+        .custom-input:focus {
+            border-color: var(--color-accent);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(209, 190, 176, 0.1);
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center p-6">
+
+    <!-- 個人資訊掛牌 -->
+    <div class="fixed top-6 right-6 z-50 id-badge px-5 py-3 rounded-bl-2xl shadow-2xl animate-fade-in flex items-center gap-4">
+        <div class="w-10 h-10 rounded-full border border-accent/30 bg-navy/50 flex items-center justify-center">
+            <i data-lucide="award" class="w-5 h-5" style="color: var(--color-accent)"></i>
+        </div>
+        <div>
+            <p class="text-[10px] text-muted font-bold uppercase tracking-widest">系統開發者</p>
+            <p class="text-sm font-bold tracking-wide" style="color: var(--color-light)">王幸翎 <span class="mx-1" style="color: var(--color-muted)">|</span> 111213216</p>
+        </div>
+    </div>
+
+    <!-- 主體內容 -->
+    <main class="w-full max-w-xl relative animate-fade-in">
+        
+        <!-- 標題區域 -->
+        <header class="text-center mb-12">
+            <div class="inline-block px-4 py-1.5 rounded-full mb-5" style="background: rgba(60, 79, 118, 0.5); border: 1px solid rgba(209, 190, 176, 0.2)">
+                <span class="text-[10px] uppercase tracking-[0.3em] font-bold" style="color: var(--color-accent)">Prototype Intelligence v2.5</span>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4" style="color: var(--color-light)">
+                智慧<span class="accent-gradient">投資推薦</span>系統
+            </h1>
+        </header>
+
+        <!-- 第一步：輸入介面 -->
+        <section id="step-input" class="glass rounded-[2.5rem] p-10">
+            <div class="space-y-8">
+                <!-- 資金輸入 -->
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <label class="text-sm font-semibold" style="color: var(--color-light)">預計投資金額</label>
+                        <span class="text-[10px] px-2 py-0.5 rounded" style="background: var(--color-navy); color: var(--color-muted)">TWD 1,000 - 40,000</span>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-5 flex items-center pointer-events-none">
+                            <span style="color: var(--color-accent)" class="font-bold">$</span>
+                        </div>
+                        <input type="number" id="capital" placeholder="請輸入金額..." 
+                            class="custom-input w-full rounded-2xl py-5 pl-12 pr-6 text-xl font-medium transition-all placeholder:text-muted/50">
+                    </div>
+                </div>
+
+                <!-- 期限選擇 -->
+                <div class="grid grid-cols-2 gap-5">
+                    <button type="button" id="btn-long" class="flex flex-col items-center gap-3 p-5 rounded-3xl border-2 transition-all" style="border-color: var(--color-accent); background: rgba(209, 190, 176, 0.1)">
+                        <i data-lucide="anchor" class="w-6 h-6" style="color: var(--color-accent)"></i>
+                        <span class="text-sm font-bold" style="color: var(--color-light)">長期穩健</span>
+                        <span class="text-[10px]" style="color: var(--color-muted)">存股/穩定收益</span>
+                    </button>
+                    <button type="button" id="btn-short" class="flex flex-col items-center gap-3 p-5 rounded-3xl border-2 transition-all opacity-40" style="border-color: var(--color-navy); background: transparent">
+                        <i data-lucide="wind" class="w-6 h-6" style="color: var(--color-muted)"></i>
+                        <span class="text-sm font-bold" style="color: var(--color-light)">短期波段</span>
+                        <span class="text-[10px]" style="color: var(--color-muted)">趨勢/ETF操作</span>
+                    </button>
+                </div>
+
+                <!-- 策略選擇 -->
+                <div>
+                    <label class="block text-sm font-semibold mb-3" style="color: var(--color-light)">推薦運算引擎</label>
+                    <select id="algo-select" class="custom-input w-full rounded-2xl py-4 px-5 cursor-pointer appearance-none">
+                        <option value="rf">隨機森林分析 (Random Forest)</option>
+                        <option value="ma">均線交會策略 (MA Crossover)</option>
+                        <option value="vr">價值回歸演算法 (Value Regression)</option>
+                    </select>
+                </div>
+
+                <!-- 按鈕 (恢復圖示) -->
+                <button id="generate-btn" class="w-full btn-fancy text-white font-bold py-5 rounded-2xl shadow-xl flex items-center justify-center gap-3 group">
+                    <span style="color: var(--color-light)">執行 AI 模型分析</span>
+                    <i data-lucide="compass" class="w-5 h-5 group-hover:rotate-180 transition-transform duration-500" style="color: var(--color-accent)"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- 第二步：加載中 -->
+        <section id="step-loading" class="hidden glass rounded-[2.5rem] p-20 text-center relative overflow-hidden">
+            <div class="scanner-line"></div>
+            <div class="relative z-10">
+                <div class="w-24 h-24 relative mx-auto mb-8">
+                    <div class="absolute inset-0 border-2 border-navy rounded-full"></div>
+                    <div class="absolute inset-0 border-2 border-t-accent rounded-full animate-spin"></div>
+                    <i data-lucide="layers" class="absolute inset-0 m-auto w-10 h-10 animate-pulse" style="color: var(--color-accent)"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-3 glow-accent" style="color: var(--color-accent)">正在運算配置方案...</h3>
+                <p class="text-sm" style="color: var(--color-muted)">正在篩選符合莫蘭迪模型之標的</p>
+            </div>
+        </section>
+
+        <!-- 第三步：結果呈現 -->
+        <section id="step-result" class="hidden glass rounded-[2.5rem] overflow-hidden shadow-2xl">
+            <div class="h-1.5 bg-gradient-to-r" style="background: linear-gradient(90deg, var(--color-navy), var(--color-accent))"></div>
+            
+            <div class="p-10">
+                <div class="flex justify-between items-start mb-10">
+                    <div class="flex flex-col gap-2">
+                        <span id="res-type-badge" class="inline-block px-3 py-1 rounded text-[10px] font-bold" style="background: var(--color-navy); color: var(--color-accent); border: 1px solid rgba(209, 190, 176, 0.2)">ETF 標的</span>
+                        <h2 class="text-sm uppercase tracking-widest mt-2" style="color: var(--color-muted)">Optimized Choice</h2>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[9px] uppercase tracking-widest mb-1" style="color: var(--color-muted)">Match Ratio</p>
+                        <p class="text-2xl font-black" style="color: var(--color-light)">98.2<span class="text-sm">%</span></p>
+                    </div>
+                </div>
+
+                <!-- 核心標的卡片 -->
+                <div class="rounded-3xl p-8 mb-8 flex flex-col items-center border" style="background: rgba(56, 63, 81, 0.4); border-color: rgba(221, 219, 241, 0.05)">
+                    <p id="res-stock-name" class="text-5xl font-black accent-gradient mb-2">--</p>
+                    <p id="res-stock-code" class="tracking-[0.5em] font-mono text-sm" style="color: var(--color-muted)">--</p>
+                    
+                    <!-- 模擬圖表 -->
+                    <div class="mt-8 w-full flex items-end justify-center gap-1.5 h-16">
+                        <div class="w-2.5 rounded-t h-[30%]" style="background: var(--color-navy)"></div>
+                        <div class="w-2.5 rounded-t h-[50%]" style="background: var(--color-navy); opacity: 0.6"></div>
+                        <div class="w-2.5 rounded-t h-[80%]" style="background: var(--color-accent); opacity: 0.4"></div>
+                        <div class="w-2.5 rounded-t h-[60%]" style="background: var(--color-navy)"></div>
+                        <div class="w-2.5 rounded-t h-[90%]" style="background: var(--color-accent)"></div>
+                        <div class="w-2.5 rounded-t h-[75%]" style="background: var(--color-navy); opacity: 0.8"></div>
+                    </div>
+                </div>
+
+                <!-- 建議內容 -->
+                <div class="bg-navy/10 rounded-2xl p-6 mb-8 border border-white/5">
+                    <div class="flex gap-5">
+                        <div class="w-12 h-12 rounded-2xl bg-navy flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="book-open" class="w-6 h-6" style="color: var(--color-accent)"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold mb-1" style="color: var(--color-light)">專家配置觀點</p>
+                            <p id="res-reason" class="text-xs leading-relaxed" style="color: var(--color-muted)">--</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 操作 -->
+                <div class="flex gap-4">
+                    <button id="retest-btn" class="flex-1 border font-semibold py-4 rounded-2xl transition-all flex items-center justify-center gap-2" style="border-color: var(--color-navy); color: var(--color-light)">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                        重新評估
+                    </button>
+                    <button class="px-8 py-4 rounded-2xl transition-colors" style="background: var(--color-navy)">
+                        <i data-lucide="download" class="w-5 h-5" style="color: var(--color-accent)"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 頁尾 -->
+        <footer class="mt-12 text-center">
+            <p class="text-[10px] uppercase tracking-widest" style="color: var(--color-muted)">Zero with Gemini Canvas © 2025</p>
+        </footer>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        const stockDatabase = [
+            { name: "元大台灣50", code: "0050", horizon: "long", algo: "vr", type: "ETF", reason: "台股長期走勢趨堅，目前評價處於合理水位。建議小資族以零股定期定額，分批佈局獲取大盤長期成長利潤。" },
+            { name: "台積電", code: "2330", horizon: "long", algo: "rf", type: "股票", reason: "AI 晶片需求持續擴張。模型預測其長期結構性獲利能力未變，透過零股累積單位數是大學生配置的首選標的。" },
+            { name: "國泰永續高股息", code: "00878", horizon: "long", algo: "rf", type: "ETF", reason: "重視 ESG 穩定性與配息機制。隨機森林模型顯示其在市場震盪期間具備極佳的下檔支撐力，適合領息存股。" },
+            { name: "復華台灣科技優息", code: "00929", horizon: "short", algo: "ma", type: "ETF", reason: "月配息與科技選股雙重優勢。技術面正處於短期均線糾結後的帶量突破區，適合追求短線價差與固定現金流。" },
+            { name: "統一 FANG+", code: "00757", horizon: "short", algo: "rf", reason: "美股十大科技巨頭核心組合。隨機森林分析顯示目前正處於上升趨勢發散階段，適合追求短線爆發獲利。" },
+            { name: "群益台灣精選高股息", code: "00919", horizon: "short", algo: "vr", reason: "近期評價面出現超跌信號。價值回歸演算法偵測到短線乖離率已大，具備短波段反彈空間與除息行情機會。" },
+            { name: "玉山金", code: "2884", horizon: "long", algo: "vr", type: "股票", reason: "股息發放穩定且單價親民。4萬預算可完整買進一張，對於建立投資心理素質與長期理財習慣非常有幫助。" },
+            { name: "元大高股息", code: "0056", horizon: "long", algo: "ma", type: "ETF", reason: "高股息標的龍頭。長期均線呈現向上緩坡，根據 MA 策略，目前是極佳的介入點，能兼顧配息與基本面成長。" }
+        ];
+
+        let selectedHorizon = 'long';
+
+        function setHorizon(h) {
+            selectedHorizon = h;
+            const btnLong = document.getElementById('btn-long');
+            const btnShort = document.getElementById('btn-short');
+            
+            if (!btnLong || !btnShort) return;
+
+            const updateButtonStyle = (btn, isActive) => {
+                const icon = btn.querySelector('svg') || btn.querySelector('[data-lucide]');
+                
+                if (isActive) {
+                    btn.style.borderColor = 'var(--color-accent)';
+                    btn.style.background = 'rgba(209, 190, 176, 0.1)';
+                    btn.classList.remove('opacity-40');
+                    if (icon) icon.style.color = 'var(--color-accent)';
+                } else {
+                    btn.style.borderColor = 'var(--color-navy)';
+                    btn.style.background = 'transparent';
+                    btn.classList.add('opacity-40');
+                    if (icon) icon.style.color = 'var(--color-muted)';
+                }
+            };
+
+            updateButtonStyle(btnLong, h === 'long');
+            updateButtonStyle(btnShort, h === 'short');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnLong = document.getElementById('btn-long');
+            const btnShort = document.getElementById('btn-short');
+            const generateBtn = document.getElementById('generate-btn');
+            const retestBtn = document.getElementById('retest-btn');
+            
+            if (btnLong) btnLong.addEventListener('click', () => setHorizon('long'));
+            if (btnShort) btnShort.addEventListener('click', () => setHorizon('short'));
+
+            if (generateBtn) {
+                generateBtn.addEventListener('click', () => {
+                    const capital = document.getElementById('capital').value;
+                    const stepInput = document.getElementById('step-input');
+                    const stepLoading = document.getElementById('step-loading');
+                    const stepResult = document.getElementById('step-result');
+
+                    if (!capital || capital < 1000 || capital > 40000) {
+                        alert("請輸入有效的理財金額 (1,000 ~ 40,000 TWD)");
+                        return;
+                    }
+
+                    stepInput.classList.add('hidden');
+                    stepLoading.classList.remove('hidden');
+
+                    setTimeout(() => {
+                        const algo = document.getElementById('algo-select').value;
+                        const result = getRecommendation(selectedHorizon, algo);
+                        
+                        document.getElementById('res-stock-name').innerText = result.name;
+                        document.getElementById('res-stock-code').innerText = `${result.code}.TW`;
+                        document.getElementById('res-reason').innerText = result.reason;
+                        document.getElementById('res-type-badge').innerText = result.type || 'ETF 標的';
+
+                        stepLoading.classList.add('hidden');
+                        stepResult.classList.remove('hidden');
+                        lucide.createIcons();
+                    }, 2000);
+                });
+            }
+
+            if (retestBtn) {
+                retestBtn.addEventListener('click', () => {
+                    document.getElementById('step-result').classList.add('hidden');
+                    document.getElementById('step-input').classList.remove('hidden');
+                    document.getElementById('capital').value = "";
+                });
+            }
+        });
+
+        function getRecommendation(horizon, algo) {
+            let candidates = stockDatabase.filter(s => s.horizon === horizon);
+            let matched = candidates.filter(s => s.algo === algo);
+            return matched.length > 0 
+                ? matched[Math.floor(Math.random() * matched.length)] 
+                : candidates[Math.floor(Math.random() * candidates.length)];
+        }
+    </script>
+</body>
+</html>
